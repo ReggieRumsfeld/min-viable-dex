@@ -28,7 +28,9 @@ export default function Events({ contracts, contractName, eventName, localProvid
       <h2>
         {eventName} Events
         <br />
-        {eventName === "EthToTokenSwap"
+        {eventName === "Approval"
+        ? "Owner | Spender | Amount"
+          : eventName === "EthToTokenSwap"
           ? " ⟠ -->🎈 Address | Trade | AmountIn | AmountOut"
           : eventName === "TokenToEthSwap"
           ? "🎈-->⟠ Address | Trade | AmountOut | AmountIn"

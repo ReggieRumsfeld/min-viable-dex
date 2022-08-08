@@ -12,6 +12,7 @@ packages/hardhat/deployments
 packages/react-app/src/contracts/*
 !packages/react-app/src/contracts/external_contracts.js
 packages/hardhat/cache*
+packages/hardhat/hardhat*
 packages/**/data
 !packages/react-app/src/contracts/contracts.js
 
@@ -49,6 +50,7 @@ build
 cache
 artifacts
 
+
 # misc
 .DS_Store
 .env*
@@ -67,3 +69,6 @@ yarn-error.log*
 
 # doc directory
 /doc
+packages/hardhat/hardhat.config.js
+packages/hardhat/hardhat.config.js
+packages/hardhat/hardhat.config.js

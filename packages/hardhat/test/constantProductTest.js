@@ -1,5 +1,5 @@
 const { ethers } = require("hardhat");
-const { use, expect } = require("chai");
+const { use, expect, assert } = require("chai");
 const { solidity } = require("@nomicfoundation/hardhat-chai-matchers");
 
 /**
@@ -38,7 +38,18 @@ describe("🚩 Challenge 3: ⚖️ 🪙 Simple DEX", function () {
     /* TODO checking `price` calcs. Preferably calculation test should be provided by somebody who didn't implement this functions in 
     challenge to not reproduce mistakes systematically.*/
     describe("init()", function () {
-      describe("ethToToken()", function () {
+
+     
+
+      xit("initializes", async function () {
+        await balloonsContract.approve(dexContract.address, 1000);
+        await dexContract.init(10, { value: ethers.utils.parseEther("1") })
+      })
+       it("Show totalLiquidity", async function () {
+         console.log("Total Liquidity: ", await dexContract.totalLiquidity());
+       });
+
+      xdescribe("ethToToken()", function () {
         it("Should send 1 Ether to DEX in exchange for _ $BAL", async function () {
           let tx1 = await dexContract.ethToToken({
             value: ethers.utils.parseEther("1"),
@@ -68,7 +79,7 @@ describe("🚩 Challenge 3: ⚖️ 🪙 Simple DEX", function () {
         });
         // could insert more tests to show the declining price, and what happens when the pool becomes very imbalanced.
       });
-      describe("tokenToEth", async () => {
+      xdescribe("tokenToEth", async () => {
         it("Should send 1 $BAL to DEX in exchange for _ $ETH", async function () {
           const balloons_bal_start = await balloonsContract.balanceOf(dexContract.address);
           
@@ -102,13 +113,25 @@ describe("🚩 Challenge 3: ⚖️ 🪙 Simple DEX", function () {
 
       describe("deposit", async () => {
         it("Should deposit 1 ETH and 1 $BAL when pool at 1:1 ratio", async function () {
+          let preLiq = await dexContract.totalLiquidity();
+          console.log("Pre LIQ: ", preLiq);
           let tx1 = await dexContract.deposit(
-            (ethers.utils.parseEther("5"),
+            (ethers.utils.parseEther("1"),
             {
-              value: ethers.utils.parseEther("5"),
+              value: ethers.utils.parseEther("1"),
             })
           );
-          // TODO: SYNTAX - Write expect() assessing changed liquidty within the pool. Should have an emitted event!
+          let postLiq = await dexContract.totalLiquidity();
+          console.log("Post Liq: ", postLiq);
+          //assert(postLiq.eq(preLiq.add("1")));
+          const tx1_receipt = await tx1.wait();
+          const logDescr = dexContract.interface.parseLog(
+                tx1_receipt.logs.find(
+                  (log) => log.address == dexContract.address
+                )
+              );
+          const args = logDescr.args;
+          expect(args[1]).to.equal(ethers.utils.parseEther("1"));
         });
       });
 
@@ -117,8 +140,12 @@ describe("🚩 Challenge 3: ⚖️ 🪙 Simple DEX", function () {
         it("Should withdraw 1 ETH and 1 $BAL when pool at 1:1 ratio", async function () {
           let tx1 = await dexContract
             .withdraw(ethers.utils.parseEther("1"));
-
-          // TODO: SYNTAX - Write expect() assessing changed liquidty within the pool. Should have an emitted event!
+            const tx1_receipt = await tx1.wait();
+            const logDescr = dexContract.interface.parseLog(
+              tx1_receipt.logs.find((log) => log.address == dexContract.address)
+            );
+            const args = logDescr.args;
+            expect(args[1]).to.equal(ethers.utils.parseEther("1"));
         });
       });
     });
